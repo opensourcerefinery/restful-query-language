@@ -2,9 +2,6 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage;
 
-final class Pagination
+final class MissingRequiredParameter extends \InvalidArgumentException
 {
-    public function __construct()
-    {
-    }
 }
