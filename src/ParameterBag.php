@@ -5,6 +5,9 @@ namespace OpenSourceRefinery\Component\QueryLanguage;
 use OpenSourceRefinery\Component\QueryLanguage\Types\TypeGuesser;
 use OpenSourceRefinery\Component\QueryLanguage\Types\TypeValue;
 
+/**
+ * todo Think about renaming this class FilterBag, since it contains filters in the end. Parameters are the root nodes.
+ */
 final class ParameterBag
 {
     /**

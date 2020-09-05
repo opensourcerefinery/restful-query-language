@@ -17,6 +17,11 @@ final class QueryLanguageEngine implements Engine
         }
     }
 
+    public function createDefinition(string $name, ParameterResolver $resolver): Definition
+    {
+        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+    }
+
     public function registerFactory(ParameterFactory $handler): void
     {
         $this->factories[] = $handler;
