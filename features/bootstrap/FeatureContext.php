@@ -6,12 +6,27 @@ use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use OpenSourceRefinery\Component\QueryLanguage\Parameters\Page\PageParameter;
+use OpenSourceRefinery\Component\QueryLanguage\Platforms\PlatformSpy;
+use PHPUnit\Framework\Assert;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements SnippetAcceptingContext
 {
+    const RESOURCE_URL = '/resource';
+
+    /**
+     * @var QueryLanguageEngine
+     */
+    private $engine;
+
+    /**
+     * @var QueryingPlatform
+     */
+    private $platform;
+
     /**
      * Initializes context.
      *
@@ -21,29 +36,37 @@ class FeatureContext implements SnippetAcceptingContext
      */
     public function __construct()
     {
+        $this->engine = new QueryLanguageEngine();
+        $this->platform = new PlatformSpy();
     }
 
     /**
-     * @Given I have the following dataset
+     * @When I request the url with the :arg1 parameter
      */
-    public function iHaveTheFollowingDataset(TableNode $table): void
+    public function iRequestTheUrlWithTheParameter(string $key, TableNode $table): void
     {
-        throw new PendingException();
+        $this->engine->registerFactory(new PageParameter());
+
+        $parameters = [];
+        foreach ($table->getHash() as $rows) {
+            foreach ($rows as $parameter => $value) {
+                if ($parameter === 'json') {
+                    $parameters[$key] = $value;
+                    continue;
+                }
+
+                $parameters[$key][$parameter] = $value;
+            }
+        }
+
+        $this->engine->applyParameters(ParameterBag::fromArray($parameters), $this->platform);
     }
 
     /**
-     * @When I request the url :arg1
+     * @Then I should have the following response
      */
-    public function iRequestTheUrl(string $url): void
+    public function iShouldHaveTheFollowingResponse(string $expected): void
     {
-        throw new PendingException();
-    }
-
-    /**
-     * @Then I should have the following ids :arg1
-     */
-    public function iShouldHaveTheFollowingIds(string $ids): void
-    {
-        throw new PendingException();
+        Assert::assertJsonStringEqualsJsonString($expected, $this->platform->toJson());
     }
 }
