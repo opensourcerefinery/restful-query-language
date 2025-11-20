@@ -2,6 +2,8 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage\Types;
 
+use OpenSourceRefinery\Component\QueryLanguage\Types\Values\EmptyValue;
+
 final class IntegerValue implements TypeValue
 {
     /**
@@ -12,6 +14,16 @@ final class IntegerValue implements TypeValue
     private function __construct(int $value)
     {
         $this->value = $value;
+    }
+
+    public function equalsTo(TypeValue $value): bool
+    {
+        return $value->toInt() === $this->toInt();
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
     }
 
     public function toString(): string
@@ -30,6 +42,10 @@ final class IntegerValue implements TypeValue
      */
     public static function fromNumeric($value): TypeValue
     {
+        if (\is_null($value)) {
+            return new EmptyValue();
+        }
+
         if (\is_string($value)) {
             return self::fromString($value);
         }
@@ -44,6 +60,10 @@ final class IntegerValue implements TypeValue
 
     public static function fromString(string $value): TypeValue
     {
+        if (! is_numeric($value) && \is_string($value) && empty($value)) {
+            return new EmptyValue();
+        }
+
         if (! \is_numeric($value)) {
             throw new InvalidTypeValue(\sprintf('Value "%s" was expected to be integer, but is not.', $value));
         }

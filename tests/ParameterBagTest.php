@@ -3,6 +3,8 @@
 namespace OpenSourceRefinery\Component\QueryLanguage;
 
 use OpenSourceRefinery\Component\QueryLanguage\Types\InvalidTypeValue;
+use OpenSourceRefinery\Component\QueryLanguage\Types\StringValue;
+use OpenSourceRefinery\Component\QueryLanguage\Types\TypeValue;
 use PHPUnit\Framework\TestCase;
 
 final class ParameterBagTest extends TestCase
@@ -58,5 +60,49 @@ final class ParameterBagTest extends TestCase
         self::assertSame('12.34', $bag->get('float')->toString());
         self::assertSame('12.34', $bag->get('float-str')->toString());
         self::assertSame('1', $bag->get('int-float')->toString());
+    }
+
+    public function test_it_should_be_immutable_when_setting_a_value(): void
+    {
+        $original = ParameterBag::emptyBag();
+        $withOne = $original->set('one', $this->createMock(TypeValue::class));
+        $withThree = $withOne
+            ->set('two', $this->createMock(TypeValue::class))
+            ->set('three', $this->createMock(TypeValue::class));
+
+        self::assertFalse($original->has('one'));
+        self::assertFalse($withOne->has('two'));
+        self::assertFalse($withOne->has('three'));
+
+        self::assertTrue($withOne->has('one'));
+        self::assertFalse($withOne->has('two'));
+        self::assertFalse($withOne->has('three'));
+
+        self::assertTrue($withThree->has('one'));
+        self::assertTrue($withThree->has('two'));
+        self::assertTrue($withThree->has('three'));
+    }
+
+    public function test_it_should_replace_value(): void
+    {
+        $bag = ParameterBag::fromArray(['one' => ['two' => ['three' => ['value']]]]);
+
+        $replace = $bag->set('one', StringValue::fromString('value'));
+        self::assertSame('value', $replace->get('one')->toString());
+        self::assertFalse($replace->has('one.two'));
+        self::assertFalse($replace->has('one.two.three'));
+
+        $replace = $bag->set('one.two.three', StringValue::fromString('new'));
+        self::assertTrue($replace->has('one'));
+        self::assertTrue($replace->has('one.two'));
+        self::assertSame('new', $replace->get('one.two.three')->toString());
+    }
+
+    public function test_it_should_return_the_value_of_node(): void
+    {
+        $bag = ParameterBag::fromArray(['one' => ['two' => ['three' => 'value']]]);
+        self::assertSame('value', $bag->get('one.two.three')->toString());
+        self::assertSame('{"three":"value"}', $bag->get('one.two')->toString());
+        self::assertSame('{"two":{"three":"value"}}', $bag->get('one')->toString());
     }
 }

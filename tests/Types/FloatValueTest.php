@@ -31,4 +31,18 @@ final class FloatValueTest extends TestCase
         $this->expectExceptionMessage('Value was expected to be a numeric. Got: "string".');
         FloatValue::fromMixed('string');
     }
+
+    public function test_empty_string_should_return_empty_value(): void
+    {
+        self::assertTrue(FloatValue::fromMixed('')->isEmpty());
+        self::assertTrue(FloatValue::fromMixed(null)->isEmpty());
+    }
+
+    public function test_zero_should_not_be_considered_empty(): void
+    {
+        self::assertFalse(FloatValue::fromMixed(0)->isEmpty());
+        self::assertFalse(FloatValue::fromMixed(0.0)->isEmpty());
+        self::assertFalse(FloatValue::fromMixed('0')->isEmpty());
+        self::assertFalse(FloatValue::fromMixed('0.0')->isEmpty());
+    }
 }

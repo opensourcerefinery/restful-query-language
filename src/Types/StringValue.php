@@ -2,6 +2,8 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage\Types;
 
+use OpenSourceRefinery\Component\QueryLanguage\Types\Values\EmptyValue;
+
 final class StringValue implements TypeValue
 {
     /**
@@ -12,6 +14,16 @@ final class StringValue implements TypeValue
     private function __construct(string $value)
     {
         $this->value = $value;
+    }
+
+    public function equalsTo(TypeValue $value): bool
+    {
+        return $value->toString() === $this->toString();
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
     }
 
     public function toString(): string
@@ -26,6 +38,15 @@ final class StringValue implements TypeValue
 
     public static function fromString(string $string): TypeValue
     {
+        if (\mb_strlen($string) === 0) {
+            return self::emptyString();
+        }
+
         return new self($string);
+    }
+
+    public static function emptyString(): TypeValue
+    {
+        return new EmptyValue();
     }
 }

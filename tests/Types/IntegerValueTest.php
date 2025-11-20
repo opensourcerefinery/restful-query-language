@@ -24,4 +24,16 @@ final class IntegerValueTest extends TestCase
         $this->expectExceptionMessage('Value "invalid" was expected to be integer, but is not.');
         IntegerValue::fromString('invalid');
     }
+
+    public function test_empty_string_should_return_empty_value(): void
+    {
+        self::assertTrue(IntegerValue::fromString('')->isEmpty());
+        self::assertTrue(IntegerValue::fromNumeric(null)->isEmpty());
+    }
+
+    public function test_zero_should_not_be_considered_empty(): void
+    {
+        self::assertFalse(IntegerValue::fromNumeric(0)->isEmpty());
+        self::assertFalse(IntegerValue::fromNumeric('0')->isEmpty());
+    }
 }

@@ -13,5 +13,5 @@ script:
   - bin/phpunit
   - bin/behat --format progress
   - bin/phpcs
-  - bin/phpstan analyse phpstan.neon
+  - bin/phpstan analyse src tests -c=phpstan.neon
   - bin/infection --formatter=progress

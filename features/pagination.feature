@@ -3,6 +3,18 @@ Feature: Use Pagination to filter result
   In order to limit a result
   I need to paginate the result
 
+  Background:
+    Given The fixture data
+    | id | first_name | last_name | is_active | gender | created_at | updated_at |
+    | 1  | John       | Smith     | true      | male   | 2000-01-01 | 2000-02-01 |
+    | 2  | Jane       | Smith     | true      | female | 2000-01-01 | 2000-02-01 |
+    | 3  | Joe        | Dalton    | true      | male   | 2000-01-02 | 2000-03-01 |
+    | 4  | Jack       | Dalton    | true      | male   | 2000-01-02 | 2000-03-01 |
+    | 5  | William    | Dalton    | true      | male   | 2000-01-03 | 2000-04-01 |
+    | 6  | Averell    | Dalton    | true      | male   | 2000-01-03 | 2000-04-01 |
+    | 7  | Ma         | Dalton    | true      | female | 2000-01-04 | 2000-05-01 |
+    | 8  | Lucky      | Luke      | true      | male   | 2000-01-04 | 2000-05-01 |
+
   Scenario: Return all the data when no parameters are given
     When I request the url with the page parameter
     | |

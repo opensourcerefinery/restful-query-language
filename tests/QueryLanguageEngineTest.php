@@ -2,8 +2,14 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage;
 
-use OpenSourceRefinery\Component\QueryLanguage\Parameters\ClosureParameter;
+use OpenSourceRefinery\Component\QueryLanguage\Core\Resolvers\ClosureResolver;
+use OpenSourceRefinery\Component\QueryLanguage\Filtering\ArrayOfFilterDefinitions;
+use OpenSourceRefinery\Component\QueryLanguage\Options\DefaultValue;
+use OpenSourceRefinery\Component\QueryLanguage\Options\RequiredFilter;
 use OpenSourceRefinery\Component\QueryLanguage\Platforms\PlatformSpy;
+use OpenSourceRefinery\Component\QueryLanguage\Types\EnumType;
+use OpenSourceRefinery\Component\QueryLanguage\Types\StringType;
+use OpenSourceRefinery\Component\QueryLanguage\Types\StringValue;
 use PHPUnit\Framework\TestCase;
 
 final class QueryLanguageEngineTest extends TestCase
@@ -32,18 +38,26 @@ final class QueryLanguageEngineTest extends TestCase
 
     public function test_it_should_build_custom_definition_with_filter(): void
     {
-        $this->markTestIncomplete('todo');
         $engine = new QueryLanguageEngine();
         $definition = $engine->createDefinition(
             'sort',
-            new ClosureParameter(
+            new ClosureResolver(
                 function (QueryingPlatform $platform, ParameterBag $bag): void {
                     throw new \RuntimeException('Definition works');
                 }
+            ),
+            new ArrayOfFilterDefinitions(
+                new GenericFilter('property', new StringType(), new RequiredFilter()),
+                new GenericFilter(
+                    'direction',
+                    new EnumType(
+                        StringValue::fromString('asc'),
+                        StringValue::fromString('desc')
+                    ),
+                    new DefaultValue(StringValue::fromString('desc'))
+                )
             )
         );
-        $definition->addStringFilter('property')->required();
-        $definition->addEnumFilter('direction', ['asc', 'desc'])->defaultValue('desc');
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Definition works');
@@ -67,7 +81,7 @@ final class QueryLanguageEngineTest extends TestCase
         $engine = new QueryLanguageEngine();
         $definition = $engine->createDefinition(
             'id',
-            new ClosureParameter(
+            new ClosureResolver(
                 function (QueryingPlatform $platform, ParameterBag $bag): void {
                     throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
                 }

@@ -41,6 +41,14 @@ class FeatureContext implements SnippetAcceptingContext
     }
 
     /**
+     * @Given The fixture data
+     */
+    public function theFixtureData(TableNode $table)
+    {
+        throw new PendingException();
+    }
+
+    /**
      * @When I request the url with the :arg1 parameter
      */
     public function iRequestTheUrlWithTheParameter(string $key, TableNode $table): void

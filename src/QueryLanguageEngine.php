@@ -2,6 +2,9 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage;
 
+use OpenSourceRefinery\Component\QueryLanguage\Core\Visitors\HandleDefaultValues;
+use OpenSourceRefinery\Component\QueryLanguage\Core\Visitors\ValidateFilterOptions;
+
 final class QueryLanguageEngine implements Engine
 {
     /**
@@ -13,13 +16,23 @@ final class QueryLanguageEngine implements Engine
     {
         foreach ($this->factories as $factory) {
             $parameter = $factory->createParameter($parameters);
+
+            $parameter->acceptParameterVisitor(new HandleDefaultValues());
+            $parameter->acceptParameterVisitor(new ValidateFilterOptions());
+
             $parameter->apply($platform);
         }
     }
 
-    public function createDefinition(string $name, ParameterResolver $resolver): Definition
-    {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+    public function createDefinition(
+        string $name,
+        ParameterResolver $resolver,
+        FilterDefinition $filter
+    ): ParameterDefinition {
+        $definition = new ParameterDefinition($name, $filter, $resolver);
+        $this->registerFactory($definition);
+
+        return $definition;
     }
 
     public function registerFactory(ParameterFactory $handler): void

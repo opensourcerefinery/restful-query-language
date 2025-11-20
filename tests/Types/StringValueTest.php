@@ -24,4 +24,10 @@ final class StringValueTest extends TestCase
         $this->expectExceptionMessage('Value "invalid" was expected to be integer, but is not.');
         StringValue::fromString('invalid')->toInt();
     }
+
+    public function test_empty_string_should_return_empty_value(): void
+    {
+        $value = StringValue::fromString('');
+        self::assertTrue($value->isEmpty());
+    }
 }

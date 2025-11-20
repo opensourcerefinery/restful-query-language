@@ -2,6 +2,7 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage\Types;
 
+use OpenSourceRefinery\Component\QueryLanguage\Types\Values\EmptyValue;
 use Webmozart\Assert\Assert;
 
 final class FloatValue implements TypeValue
@@ -14,6 +15,16 @@ final class FloatValue implements TypeValue
     private function __construct(float $value)
     {
         $this->value = $value;
+    }
+
+    public function equalsTo(TypeValue $value): bool
+    {
+        return $value->toString() === $this->toString();
+    }
+
+    public function isEmpty(): bool
+    {
+        return false;
     }
 
     public function toString(): string
@@ -33,6 +44,13 @@ final class FloatValue implements TypeValue
 
     public static function fromMixed($value): TypeValue
     {
+        if (
+            (! \is_numeric($value) && \is_string($value)) && empty($value)
+            || \is_null($value)
+        ) {
+            return new EmptyValue();
+        }
+
         Assert::numeric($value, 'Value was expected to be a numeric. Got: "%s".');
         return self::fromFloat((float) $value);
     }

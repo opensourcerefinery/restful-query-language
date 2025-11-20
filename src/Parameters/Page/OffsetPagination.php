@@ -2,6 +2,7 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage\Parameters\Page;
 
+use OpenSourceRefinery\Component\QueryLanguage\ParameterVisitor;
 use OpenSourceRefinery\Component\QueryLanguage\QueryParameter;
 use OpenSourceRefinery\Component\QueryLanguage\QueryingPlatform;
 
@@ -22,6 +23,11 @@ final class OffsetPagination implements QueryParameter
         // todo add validation of values greater than 0
         $this->start = $start;
         $this->limit = $limit;
+    }
+
+    public function acceptParameterVisitor(ParameterVisitor $visitor): void
+    {
+        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
 
     public function apply(QueryingPlatform $platform): void

@@ -2,6 +2,7 @@
 
 namespace OpenSourceRefinery\Component\QueryLanguage\Parameters\Page;
 
+use OpenSourceRefinery\Component\QueryLanguage\ParameterVisitor;
 use OpenSourceRefinery\Component\QueryLanguage\QueryingPlatform;
 use OpenSourceRefinery\Component\QueryLanguage\QueryParameter;
 
@@ -30,6 +31,11 @@ final class CursorPagination implements QueryParameter
         $this->size = $size;
         $this->beforeCursor = $beforeCursor;
         $this->afterCursor = $afterCursor;
+    }
+
+    public function acceptParameterVisitor(ParameterVisitor $visitor): void
+    {
+        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
 
     public function apply(QueryingPlatform $platform): void

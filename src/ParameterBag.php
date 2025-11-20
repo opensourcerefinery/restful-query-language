@@ -23,16 +23,16 @@ final class ParameterBag
         $this->values = $values;
     }
 
-    public function has(string $parameter): bool
+    public function has(string $name): bool
     {
-        if (! \array_key_exists($parameter, $this->values)) {
+        if (! \array_key_exists($name, $this->values)) {
             // search by key parts, starting with root node (root.key.value)
             $keys = \array_keys($this->values);
             return \count(
                 \array_filter(
                     $keys,
-                    function (string $key) use ($parameter): bool {
-                        return \strpos($key, $parameter) === 0;
+                    function (string $key) use ($name): bool {
+                        return \strpos($key, $name) === 0;
                     }
                 )
             ) > 0;
@@ -41,13 +41,27 @@ final class ParameterBag
         return true;
     }
 
-    public function get(string $parameter): TypeValue
+    public function get(string $name): TypeValue
     {
-        if (! $this->has($parameter)) {
-            throw new ParameterNotFound($parameter);
+        if (! $this->has($name)) {
+            throw new ParameterNotFound($name);
         }
 
-        return $this->values[$parameter];
+        return $this->values[$name];
+    }
+
+    public function set(string $name, TypeValue $value): ParameterBag
+    {
+        $new = NodePath::fromString($name)->formatValue($value);
+        foreach ($this->values as $node => $_v) {
+            $new = \array_merge_recursive(
+                $new,
+                NodePath::fromString($node)->formatValue($_v)
+            );
+        }
+
+        \var_dump($new);
+        return self::fromArray($new);
     }
 
     /**

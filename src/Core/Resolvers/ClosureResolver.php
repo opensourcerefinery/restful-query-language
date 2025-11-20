@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace OpenSourceRefinery\Component\QueryLanguage\Parameters;
+namespace OpenSourceRefinery\Component\QueryLanguage\Core\Resolvers;
 
 use OpenSourceRefinery\Component\QueryLanguage\ParameterBag;
 use OpenSourceRefinery\Component\QueryLanguage\ParameterResolver;
 use OpenSourceRefinery\Component\QueryLanguage\QueryingPlatform;
 
-final class ClosureParameter implements ParameterResolver
+final class ClosureResolver implements ParameterResolver
 {
     /**
      * @var $callable
